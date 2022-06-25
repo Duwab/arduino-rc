@@ -40,7 +40,7 @@ void setup() {
   // Partie NRF24
   radio.begin();                      // Initialisation du module NRF24
   radio.setChannel(RADIO_CHANNEL);
-  radio.setPALevel(RF24_PA_HIGH);
+  radio.setPALevel(RF24_PA_LOW);
   radio.setDataRate(RF24_250KBPS);
   radio.openReadingPipe(0, adresse);  // Ouverture du tunnel en LECTURE, avec le "nom" qu'on lui a donné
   radio.startListening();             // Démarrage de l'écoute du NRF24 (signifiant qu'on va recevoir, et non émettre quoi que ce soit, ici)
@@ -52,5 +52,5 @@ void loop() {
     radio.read(&message, sizeof(message));                        // Si un message vient d'arriver, on le charge dans la variable "message"
     Serial.print("Message reçu : "); Serial.println(message);     // … et on l'affiche sur le port série !
   }
-  delay(100);
+  delay(10);
 }
