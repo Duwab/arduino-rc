@@ -18,13 +18,15 @@
 #include <SPI.h>
 #include <RF24.h>
 
+#define pinA    3             // pour les tests
+#define pinB    4             // pour les tests
 #define pinCE   7             // On associe la broche "CE" du NRF24L01 à la sortie digitale D7 de l'arduino
 #define pinCSN  8             // On associe la broche "CSN" du NRF24L01 à la sortie digitale D8 de l'arduino
 #define tunnel  "PIPE1"       // On définit le "nom de tunnel" (5 caractères) à travers lequel on va recevoir les données de l'émetteur
 
 RF24 radio(pinCE, pinCSN);    // Instanciation du NRF24L01
 
-const int RADIO_CHANNEL = 12;
+const int RADIO_CHANNEL = 44;
 const rf24_pa_dbm_e RADIO_POWER = RF24_PA_HIGH;
 const rf24_datarate_e RADIO_RATE = RF24_250KBPS;
 
@@ -37,20 +39,34 @@ void setup() {
   Serial.println("Récepteur NRF24L01");
   Serial.println("");
 
+  pinMode(pinA, OUTPUT);
+  pinMode(pinB, OUTPUT);
+
   // Partie NRF24
   radio.begin();                      // Initialisation du module NRF24
   radio.setChannel(RADIO_CHANNEL);
-  radio.setPALevel(RF24_PA_LOW);
-  radio.setDataRate(RF24_250KBPS);
+  radio.setDataRate(RF24_250KBPS);  
   radio.openReadingPipe(0, adresse);  // Ouverture du tunnel en LECTURE, avec le "nom" qu'on lui a donné
+  radio.setPALevel(RF24_PA_MIN);
   radio.startListening();             // Démarrage de l'écoute du NRF24 (signifiant qu'on va recevoir, et non émettre quoi que ce soit, ici)
 }
 
 void loop() {
+  //Serial.print("loop");
+  //delay(100);
   // On vérifie à chaque boucle si un message est arrivé
   if (radio.available()) {
     radio.read(&message, sizeof(message));                        // Si un message vient d'arriver, on le charge dans la variable "message"
-    Serial.print("Message reçu : "); Serial.println(message);     // … et on l'affiche sur le port série !
+    Serial.print("Message reçu (");
+    Serial.print(sizeof(message));
+    Serial.print(") : ");
+    Serial.println(message);     // … et on l'affiche sur le port série !
+    int pinId = pinA;
+    if (strstr(message, "sendB") != NULL) {
+      pinId = pinB;
+    }
+    digitalWrite(pinId, 1);
+    delay(100);
+    digitalWrite(pinId, 0);
   }
-  delay(10);
 }
