@@ -1,5 +1,6 @@
 #include <SPI.h>
 #include <RF24.h>
+#include "src/sensors.h"
 
 #define pinStatus 2
 #define pinCE   7             // On associe la broche "CE" du NRF24L01 à la sortie digitale D7 de l'arduino
@@ -25,16 +26,13 @@ const int sD = 100;
 const int mD = 500;
 const int LD = 3000;
 
-const int pinA = 3;
-const int pinB = 4;
-int lastPinAValue = 0;
-int lastPinBValue = 0;
+Sensors mySensors; // no brackets when no args
+//Sensors mySensors(arg1, arg2);
 
 void setup() {
   Serial.begin(9600);
   pinMode(pinStatus, OUTPUT);
-  pinMode(pinA, INPUT);
-  pinMode(pinB, INPUT);
+  mySensors.init();
   pinMode(LED_BUILTIN, OUTPUT);
   doBlink(sD);
   doBlink(sD);
@@ -57,24 +55,14 @@ void initRadio() {
 
 // the loop function runs over and over again forever
 void loop() {
-  //Serial.println("loop");
-  int pinAValue = digitalRead(pinA);
-  int pinBValue = digitalRead(pinB);
-
-  if (pinAValue != lastPinAValue) {
-    Serial.println("send A " + String(pinAValue));
-    lastPinAValue = pinAValue;
+  if (mySensors.hasChangedPinA()) {
+    mySensors.recordPinA();
     sendMessage("sendA");
-    //doBlink(500);
   }
-
-  if (pinBValue != lastPinBValue) {
-    Serial.println("send B " + String(pinBValue));
-    lastPinBValue = pinBValue;
+  if (mySensors.hasChangedPinB()) {
+    mySensors.recordPinB();
     sendMessage("sendB");
-    //doBlink(500);
   }
-  //sendMessage();
   
   //if (radio.available()) {        // On vérifie si un message est en attente de lecture
   //  radio.read(&message, sizeof(message));             // Si oui, on le charge dans la variable "message"
