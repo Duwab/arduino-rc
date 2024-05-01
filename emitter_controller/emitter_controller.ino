@@ -1,7 +1,7 @@
 /**
- * This is a basic emitter setup
- * Aim is to be able to fix/adjust core NRLF features
- * Keep inputs & protocols the same to be able to "retry" new setups quickly
+ * This emitter is for a multi-purpose remote controller
+ * Will contain specific and evolutive sensors/transmission protocols
+ * If core communication problems are encountered, prefer using the basic emitter to troubleshoot configuration
  */
 
 #include "src/blink.h"
