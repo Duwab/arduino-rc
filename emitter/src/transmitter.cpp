@@ -3,8 +3,18 @@
 #include <SPI.h>
 #include <RF24.h>
 
-#define pinCE   7             // On associe la broche "CE" du NRF24L01 à la sortie digitale D7 de l'arduino
-#define pinCSN  8             // On associe la broche "CSN" du NRF24L01 à la sortie digitale D8 de l'arduino
+/*
+  SPI communication (Serial Peripheral Interface)
+  Arduino has 3 pins (11 - out, 12 - in, 13 - clock) ready to communicate with peripherals
+    - communicates with 1 at a time
+    - use CSN to tell the peripheral if it is involved in the communication
+    - CE seems to tell the peripheral if controller is in transmission/reception mode
+*/
+#define pinCE   7
+#define pinCSN  8
+//pin MOSI = COPI = 11 = M0
+//pin MISO = CIP0 = 12 = M1
+//pin SCK = 13
 
 const int RADIO_CHANNEL = 44;
 const rf24_pa_dbm_e RADIO_POWER = RF24_PA_MIN;
@@ -39,7 +49,7 @@ void Transmitter::init()
 }
 
 void Transmitter::sendMessage(const char* messageOut) {
-  //char messageOut[] = "Ma doudoune";    // Dans la limite de 32 octets (32 caractères, ici)
+  //char messageOut[] = "0123456789.0123456789.0123456789";    // Dans la limite de 32 octets (32 caractères, ici)
   Serial.println("send " + String(messageOut));
   _radio.write(messageOut, strlen(messageOut));             // Envoi du contenu stocké dans la variable "message"
 }
