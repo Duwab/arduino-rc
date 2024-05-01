@@ -1,8 +1,9 @@
 #include <SPI.h>
 #include <RF24.h>
+#include "src/blink.h"
 #include "src/sensors.h"
+#include "src/transmitter.h"
 
-#define pinStatus 2
 #define pinCE   7             // On associe la broche "CE" du NRF24L01 à la sortie digitale D7 de l'arduino
 #define pinCSN  8             // On associe la broche "CSN" du NRF24L01 à la sortie digitale D8 de l'arduino
 RF24 radio(pinCE, pinCSN);    // Instanciation du NRF24L01
@@ -21,26 +22,19 @@ const rf24_datarate_e RADIO_RATE = RF24_250KBPS;
 
 const byte adresse[6] = tunnel1;               // Mise au format "byte array" du nom du tunnel
 
-
-const int sD = 100;
-const int mD = 500;
-const int LD = 3000;
-
+Blink blinkUtil;
 Sensors mySensors; // no brackets when no args
 //Sensors mySensors(arg1, arg2);
+Transmitter transmitter;
 
 void setup() {
-  Serial.begin(9600);
-  pinMode(pinStatus, OUTPUT);
+  Serial.begin(115200);
+  blinkUtil.init();
   mySensors.init();
-  pinMode(LED_BUILTIN, OUTPUT);
-  doBlink(sD);
-  doBlink(sD);
-  doBlink(sD);
+  transmitter.init();
+  blinkUtil.ack();
   initRadio();
-  doBlink(sD);
-  doBlink(sD);
-  doBlink(sD);
+  blinkUtil.ack();
 }
 
 void initRadio() {
@@ -75,13 +69,4 @@ void sendMessage(const char* messageOut) {
   //char messageOut[] = "Ma doudoune";    // Dans la limite de 32 octets (32 caractères, ici)
   Serial.println("send " + String(messageOut));
   radio.write(messageOut, strlen(messageOut));             // Envoi du contenu stocké dans la variable "message"
-}
-  
-void doBlink(int duration) {
-  digitalWrite(pinStatus, HIGH);   // turn the LED on (HIGH is the voltage level)
-  digitalWrite(LED_BUILTIN, HIGH);
-  delay(duration);                       // wait for a second
-  digitalWrite(pinStatus, LOW);    // turn the LED off by making the voltage LOW
-  digitalWrite(LED_BUILTIN, LOW);
-  delay(duration);                       // wait for a second
 }
