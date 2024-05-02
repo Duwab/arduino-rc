@@ -33,9 +33,20 @@ const rf24_datarate_e RADIO_RATE = RF24_250KBPS;
 const byte adresse[6] = tunnel;       // Mise au format "byte array" du nom du tunnel
 char message[32];                     // Avec cette librairie, on est "limité" à 32 caractères par message
 
+struct ControllerData {
+  uint8_t x; // 1o
+  uint8_t y; // 1o
+  uint8_t z; // 1o
+  bool sw;   // 1o
+  int other; // 2o
+             //=6o (max 32o)
+};
+
+ControllerData controllerData = { 0, 0, 0, 0, 0 };
+
 void setup() {
   // Initialisation du port série (pour afficher les infos reçues, sur le "Moniteur Série" de l'IDE Arduino)
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println("Récepteur NRF24L01");
   Serial.println("");
 
@@ -45,7 +56,7 @@ void setup() {
   // Partie NRF24
   radio.begin();                      // Initialisation du module NRF24
   radio.setChannel(RADIO_CHANNEL);
-  radio.setDataRate(RF24_250KBPS);  
+  radio.setDataRate(RF24_250KBPS);
   radio.openReadingPipe(0, adresse);  // Ouverture du tunnel en LECTURE, avec le "nom" qu'on lui a donné
   radio.setPALevel(RF24_PA_MIN);
   radio.startListening();             // Démarrage de l'écoute du NRF24 (signifiant qu'on va recevoir, et non émettre quoi que ce soit, ici)
@@ -57,16 +68,44 @@ void loop() {
   // On vérifie à chaque boucle si un message est arrivé
   if (radio.available()) {
     radio.read(&message, sizeof(message));                        // Si un message vient d'arriver, on le charge dans la variable "message"
-    Serial.print("Message reçu (");
-    Serial.print(sizeof(message));
-    Serial.print(") : ");
-    Serial.println(message);     // … et on l'affiche sur le port série !
-    int pinId = pinA;
-    if (strstr(message, "sendB") != NULL) {
-      pinId = pinB;
+    logMessage();
+    if (strstr(message, "send") == NULL) {
+      memcpy(&controllerData, &message, sizeof(controllerData));
+      logControllerData();
+    } else {
+      blinkLED();
     }
-    digitalWrite(pinId, 1);
-    delay(100);
-    digitalWrite(pinId, 0);
   }
+}
+
+void logMessage()
+{
+  Serial.print("Message reçu (");
+  Serial.print(sizeof(message));
+  Serial.print(") : ");
+  Serial.println(message);     // … et on l'affiche sur le port série !
+}
+
+void logControllerData()
+{
+  Serial.print("This is a struct: x=");
+  Serial.print(controllerData.x, DEC);
+  Serial.print(", y=");
+  Serial.print(controllerData.y, DEC);
+  Serial.print(", z=");
+  Serial.print(controllerData.z, DEC);
+  Serial.print(", sw=");
+  Serial.print(controllerData.sw, DEC);
+  Serial.print(", other=");
+  Serial.println(controllerData.other, DEC);
+}
+
+void blinkLED() {
+  int pinId = pinA;
+  if (strstr(message, "sendB") != NULL) {
+    pinId = pinB;
+  }
+  digitalWrite(pinId, 1);
+  delay(100);
+  digitalWrite(pinId, 0);
 }
