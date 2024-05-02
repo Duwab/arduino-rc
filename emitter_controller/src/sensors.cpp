@@ -38,28 +38,28 @@ void Sensors::logValues()
 }
 
 // X for the controller is in fact the VY pin of the joystick
-int Sensors::getX()
+uint8_t Sensors::getX()
 {
     return analogReadNormalized(VY_PIN, JOYSTICK_MAX);
 }
 
 // Y : same explanation as X
-int Sensors::getY()
+uint8_t Sensors::getY()
 {
     return analogReadNormalized(VX_PIN, JOYSTICK_MAX);
 }
 
-int Sensors::getZ()
+uint8_t Sensors::getZ()
 {
     return 127 - analogReadNormalized(VZ_PIN, POTENTIOMETER_MAX);
 }
 
-int Sensors::getSW()
+bool Sensors::getSW()
 {
-    return digitalRead(BUTTON_SW_PIN);
+    return 1 - digitalRead(BUTTON_SW_PIN);
 }
 
-int Sensors::analogReadNormalized(int pinId, int maxMeasure)
+uint8_t Sensors::analogReadNormalized(int pinId, int maxMeasure)
 {
     int measure = analogRead(pinId);
 

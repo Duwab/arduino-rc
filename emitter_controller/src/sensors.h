@@ -8,11 +8,11 @@ class Sensors
     public:
       Sensors();
       void init();
-      int analogReadNormalized(int pinId, int maxMeasure);
-      int getX();
-      int getY();
-      int getZ();
-      int getSW();
+      uint8_t analogReadNormalized(int pinId, int maxMeasure);
+      uint8_t getX();
+      uint8_t getY();
+      uint8_t getZ();
+      bool getSW();
       void logValues();
     // private:
     //   int _lastPinAValue;
