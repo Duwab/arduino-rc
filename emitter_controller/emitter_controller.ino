@@ -36,13 +36,9 @@ void setup() {
 // the loop function runs over and over again forever
 void loop() {
   mySensors.logValues();
-  transmitter.sendMessage("sendA");
-  transmitter.sendMessage("sendB");
-
   readControllerData();
   transmitter._radio.write(&controllerData, sizeof(controllerData));
-  delay(300);
-
+  
   //if (radio.available()) {        // On vérifie si un message est en attente de lecture
   //  radio.read(&message, sizeof(message));             // Si oui, on le charge dans la variable "message"
   //}
