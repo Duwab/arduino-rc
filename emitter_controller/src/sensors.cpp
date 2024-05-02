@@ -1,48 +1,73 @@
 #include "Arduino.h"
 #include "sensors.h"
 
-const int pinA = 3;
-const int pinB = 4;
+// joystick
+#define VX_PIN 1
+#define VY_PIN 2
+#define BUTTON_SW_PIN 2
+int valueX = 0;
+int valueY = 0;
+int valueZ = 0;
+const int JOYSTICK_MAX = 1023; // manual read of this value
+
+// potentiometer
+#define VZ_PIN 5
+const int POTENTIOMETER_MAX = 700; // manual read of this value
 
 Sensors::Sensors()
 {
     // constructor
-    _lastPinAValue = 0;
-    _lastPinBValue = 0;
 }
 
 void Sensors::init()
 {
-    pinMode(pinA, INPUT);
-    pinMode(pinB, INPUT);
+    // init joystick
+    pinMode(BUTTON_SW_PIN, INPUT_PULLUP);
 }
 
-bool Sensors::hasChangedPinA()
+void Sensors::logValues()
 {
-    return _lastPinAValue != getPinA();
+    Serial.print("X:");
+    Serial.print(getX(), DEC);
+    Serial.print(" | Y:");
+    Serial.print(getY(), DEC);
+    Serial.print(" | Z:");
+    Serial.print(getZ(), DEC);
+    Serial.print(" | SW:");
+    Serial.println(getSW(), DEC);
 }
 
-bool Sensors::hasChangedPinB()
+// X for the controller is in fact the VY pin of the joystick
+int Sensors::getX()
 {
-    return _lastPinBValue != getPinB();
+    return analogReadNormalized(VY_PIN, JOYSTICK_MAX);
 }
 
-void Sensors::recordPinA()
+// Y : same explanation as X
+int Sensors::getY()
 {
-    _lastPinAValue = getPinA();
+    return analogReadNormalized(VX_PIN, JOYSTICK_MAX);
 }
 
-void Sensors::recordPinB()
+int Sensors::getZ()
 {
-    _lastPinBValue = getPinB();
+    return 127 - analogReadNormalized(VZ_PIN, POTENTIOMETER_MAX);
 }
 
-int Sensors::getPinA()
+int Sensors::getSW()
 {
-    return digitalRead(pinA);
+    return digitalRead(BUTTON_SW_PIN);
 }
 
-int Sensors::getPinB()
+int Sensors::analogReadNormalized(int pinId, int maxMeasure)
 {
-    return digitalRead(pinB);
+    int measure = analogRead(pinId);
+
+    if (measure < 0) {
+        measure = 0;
+    } else if (measure > maxMeasure) {
+        measure = maxMeasure;
+    }
+
+    return map(measure, 0, maxMeasure, 0, 127);
 }

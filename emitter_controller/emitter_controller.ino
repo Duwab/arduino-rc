@@ -22,20 +22,13 @@ void setup() {
   blinkUtil.ack();
 }
 
-void initRadio() {
-}
-
 // the loop function runs over and over again forever
 void loop() {
-  if (mySensors.hasChangedPinA()) {
-    mySensors.recordPinA();
-    transmitter.sendMessage("sendA");
-  }
-  if (mySensors.hasChangedPinB()) {
-    mySensors.recordPinB();
-    transmitter.sendMessage("sendB");
-  }
-  
+  mySensors.logValues();
+  transmitter.sendMessage("sendA");
+  transmitter.sendMessage("sendB");
+  delay(300);
+
   //if (radio.available()) {        // On vérifie si un message est en attente de lecture
   //  radio.read(&message, sizeof(message));             // Si oui, on le charge dans la variable "message"
   //}

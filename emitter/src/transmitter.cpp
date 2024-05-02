@@ -17,8 +17,9 @@
 //pin SCK = 13
 
 const int RADIO_CHANNEL = 44;
-const rf24_pa_dbm_e RADIO_POWER = RF24_PA_MIN;
+const rf24_pa_dbm_e RADIO_POWER = RF24_PA_MIN; // working with arduino Nan 3.3V output
 //const rf24_pa_dbm_e RADIO_POWER = RF24_PA_HIGH;
+//const rf24_pa_dbm_e RADIO_POWER = RF24_PA_MAX; // working using external power supply (same ground as arduino, but dedicated 3x1,5V for VCC)
 const rf24_datarate_e RADIO_RATE = RF24_250KBPS;
 
 #define tunnel1  "PIPE1"       // On définit un "nom de tunnel" (5 caractères), pour pouvoir communiquer d'un NRF24 à l'autre

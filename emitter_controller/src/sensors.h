@@ -8,15 +8,14 @@ class Sensors
     public:
       Sensors();
       void init();
-      int getPinA();
-      int getPinB();
-      bool hasChangedPinA();
-      bool hasChangedPinB();
-      void recordPinA();
-      void recordPinB();
-    private:
-      int _lastPinAValue;
-      int _lastPinBValue;
+      int analogReadNormalized(int pinId, int maxMeasure);
+      int getX();
+      int getY();
+      int getZ();
+      int getSW();
+      void logValues();
+    // private:
+    //   int _lastPinAValue;
 };
 
 #endif
