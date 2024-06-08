@@ -17,9 +17,11 @@
 */
 #include "Arduino.h"
 #include "src/transmitter.h"
+#include "src/components.h"
 
 //Sensors mySensors(arg1, arg2);
 Transmitter transmitter;
+Components components;
 
 struct ControllerData {
   uint8_t x; // 1o
@@ -32,32 +34,13 @@ struct ControllerData {
 
 ControllerData controllerData = { 0, 0, 0, 0, 0 };
 
-// servo -> TODO: move
-#include <Servo.h>
-#define pinSERVO1  3
-#define pinSERVO2  4
-Servo servo1;
-int angleServo1;
-Servo servo2;
-int angleServo2;
-
 void setup() {
   // Initialisation du port série (pour afficher les infos reçues, sur le "Moniteur Série" de l'IDE Arduino)
   Serial.begin(115200);
   Serial.println("Récepteur NRF24L01");
   Serial.println("");
 
-  servo1.attach(pinSERVO1);
-  servo2.attach(pinSERVO2);
-  delay(1000);
-  servo1.write(90);
-  delay(100);
-  servo2.write(90);
-  delay(1000);
-  servo1.write(30);
-  delay(100);
-  servo2.write(30);
-
+  components.init();
   transmitter.init();
 }
 
@@ -73,11 +56,9 @@ void loop() {
   }
 
   memcpy(&controllerData, lastMessage, sizeof(controllerData));
-  angleServo1 = map(controllerData.x, 0, 127, 0, 180);
-  angleServo2 = map(controllerData.y, 0, 127, 0, 180);
 
-  servo1.write(angleServo1);
-  servo2.write(angleServo2);
+  components.setServo1(controllerData.x, 0, 127);
+  components.setServo2(controllerData.y, 0, 127);
   logControllerData();
 
 }
