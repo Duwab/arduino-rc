@@ -37,8 +37,14 @@ void setup() {
 void loop() {
   mySensors.logValues();
   readControllerData();
-  transmitter._radio.write(&controllerData, sizeof(controllerData));
-  
+  bool success = transmitter._radio.write(&controllerData, sizeof(controllerData));
+  if (success) {
+    // transmission success
+    // but not really -> maybe requires ack payload ?
+  } else {
+    //delay(1000);
+  }
+
   //if (radio.available()) {        // On vérifie si un message est en attente de lecture
   //  radio.read(&message, sizeof(message));             // Si oui, on le charge dans la variable "message"
   //}

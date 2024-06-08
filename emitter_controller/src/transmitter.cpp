@@ -45,6 +45,7 @@ void Transmitter::init()
     _radio.setDataRate(RADIO_RATE);
     _radio.openWritingPipe(adresse);      // Ouverture du "tunnel1" en ÉCRITURE (émission radio)
     _radio.setPALevel(RADIO_POWER);
+    _radio.setAutoAck(0); // all must have this to 0 to avoid "waiting" for an ack - i guess
     //radio.openReadingPipe(1, adresses[1]);   // Ouverture du "tunnel2" en LECTURE (réception radio)
     _radio.stopListening();
 }

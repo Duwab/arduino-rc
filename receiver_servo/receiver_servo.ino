@@ -49,7 +49,7 @@ void setup() {
 
 void loop() {
   char* lastMessage = transmitter.readMessage();
-  
+
   if (strstr(lastMessage, "<empty>") != NULL) {
     return;
   }
@@ -57,10 +57,10 @@ void loop() {
     logMessage(lastMessage);
     return;
   }
-  
+
   memcpy(&controllerData, lastMessage, sizeof(controllerData));
   logControllerData();
-  
+
 }
 
 void logMessage(char* message)

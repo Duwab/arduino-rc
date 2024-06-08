@@ -52,6 +52,7 @@ void Transmitter::init()
     _radio.setDataRate(RADIO_RATE);
     _radio.openReadingPipe(0, adresse);  // Ouverture du tunnel en LECTURE, avec le "nom" qu'on lui a donné
     _radio.setPALevel(RADIO_POWER);
+    _radio.setAutoAck(0); // all must have this to 0 to avoid "waiting" for an ack - i guess
     _radio.startListening();             // Démarrage de l'écoute du NRF24 (signifiant qu'on va recevoir, et non émettre quoi que ce soit, ici)
 }
 
