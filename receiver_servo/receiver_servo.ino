@@ -59,6 +59,7 @@ void loop() {
 
   components.setServo1(controllerData.x, 0, 127);
   components.setServo2(controllerData.y, 0, 127);
+  components.setServoESC(controllerData.z, 0, 127);
   logControllerData();
 
 }
