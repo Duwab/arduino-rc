@@ -8,9 +8,7 @@
 #define pinSERVO3   9
 
 Servo servo1;
-int angleServo1;
 Servo servo2;
-int angleServo2;
 Servo servo3;
 Servo servoESC;
 
@@ -45,12 +43,12 @@ void Components::init()
 }
 
 void Components::setServo1(uint8_t angle, int rangeMin, int rangeMax) {
-    angleServo1 = map(angle, rangeMin, rangeMax, 0, 180);
+    int angleServo1 = map(angle, rangeMin, rangeMax, 0, 180);
     servo1.write(angleServo1);
 }
 
 void Components::setServo2(uint8_t angle, int rangeMin, int rangeMax) {
-    angleServo2 = map(angle, rangeMin, rangeMax, 0, 180);
+    int angleServo2 = map(angle, rangeMin, rangeMax, 0, 180);
     servo2.write(angleServo2);
 }
 
