@@ -34,6 +34,8 @@ struct ControllerData {
 
 ControllerData controllerData = { 0, 0, 0, 0, 0 };
 
+unsigned long lastMeasure = 0;
+
 void setup() {
   // Initialisation du port série (pour afficher les infos reçues, sur le "Moniteur Série" de l'IDE Arduino)
   Serial.begin(115200);
@@ -42,18 +44,21 @@ void setup() {
 
   components.init();
   transmitter.init();
+  resetValues();
 }
 
 void loop() {
   char* lastMessage = transmitter.readMessage();
 
   if (strstr(lastMessage, "<empty>") != NULL) {
-    return;
+    return loopFallback();
   }
   if (strstr(lastMessage, "send") != NULL) {
     logMessage(lastMessage);
-    return;
+    return loopFallback();
   }
+
+  lastMeasure = millis();
 
   memcpy(&controllerData, lastMessage, sizeof(controllerData));
 
@@ -63,6 +68,19 @@ void loop() {
   components.setServoESC(controllerData.z, 0, 127);
   logControllerData();
 
+}
+
+void loopFallback() {
+  if ((millis() - lastMeasure) > 1000) {
+    resetValues();
+  }
+}
+
+void resetValues() {
+  components.setServo1(63, 0, 127);
+  components.setServo2(63, 0, 127);
+  components.setServo3(63, 0, 127);
+  components.setServoESC(0, 0, 127);
 }
 
 void logMessage(char* message)
